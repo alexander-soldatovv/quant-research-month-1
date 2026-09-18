@@ -43,3 +43,17 @@ Calculated return files use decimal returns. For example, `2.89%` is written as 
 Log returns are calculated as `log(1 + simple_return)`.
 Excess simple returns are calculated as `simple_return - RF_simple`.
 Excess log returns are calculated as `log_return - RF_log`.
+
+Compare descriptive statistics across industries:
+
+```bash
+python3 scripts/compare_industry_stats.py
+```
+
+This writes:
+
+- `data/processed/10_industry_portfolios_stats.csv`
+
+The statistics are calculated for `simple`, `log`, and `excess_simple` monthly decimal returns.
+Volatility is the sample standard deviation of monthly returns.
+Kurtosis is reported as excess kurtosis, so a normal distribution is approximately `0`.
