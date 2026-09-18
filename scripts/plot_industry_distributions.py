@@ -81,7 +81,13 @@ def qq_quantiles_student_t(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, 
 def add_reference_line(axis: plt.Axes, x_values: np.ndarray, y_values: np.ndarray) -> None:
     lower = min(float(np.min(x_values)), float(np.min(y_values)))
     upper = max(float(np.max(x_values)), float(np.max(y_values)))
-    axis.plot([lower, upper], [lower, upper], color="#c2410c", linewidth=1.1)
+    axis.plot(
+        [lower, upper],
+        [lower, upper],
+        color="#c2410c",
+        linewidth=1.1,
+        label="Perfect fit line",
+    )
     axis.set_xlim(lower, upper)
     axis.set_ylim(lower, upper)
 
@@ -106,6 +112,7 @@ def save_histogram_grid(industry_returns: dict[str, np.ndarray]) -> Path:
             alpha=0.72,
             edgecolor="white",
             linewidth=0.4,
+            label="Observed returns",
         )
 
         x_min, x_max = axis.get_xlim()
@@ -148,23 +155,39 @@ def save_industry_diagnostic_plot(industry: str, values: np.ndarray) -> Path:
         alpha=0.72,
         edgecolor="white",
         linewidth=0.4,
+        label="Observed returns",
     )
     x_min, x_max = axes[0].get_xlim()
     x_grid = np.linspace(x_min, x_max, 400)
-    axes[0].plot(x_grid, stats.norm.pdf(x_grid, loc=mu, scale=sigma), color="#111827", linewidth=1.2)
+    axes[0].plot(
+        x_grid,
+        stats.norm.pdf(x_grid, loc=mu, scale=sigma),
+        color="#111827",
+        linewidth=1.2,
+        label="Normal fit",
+    )
     axes[0].plot(
         x_grid,
         stats.t.pdf(x_grid, df=degrees_of_freedom, loc=location, scale=scale),
         color="#7c3aed",
         linewidth=1.2,
+        label="Student-t fit",
     )
-    axes[0].axvline(mu, color="#c2410c", linewidth=1.0, linestyle="--")
+    axes[0].axvline(mu, color="#c2410c", linewidth=1.0, linestyle="--", label="Mean")
     axes[0].set_title("Histogram with fitted densities")
     axes[0].set_ylabel("Density")
     axes[0].grid(alpha=0.18)
     format_percent_axis(axes[0])
+    axes[0].legend(loc="upper right", fontsize=8, frameon=True)
 
-    axes[1].scatter(normal_theoretical, normal_empirical, s=12, alpha=0.62, color="#2563eb")
+    axes[1].scatter(
+        normal_theoretical,
+        normal_empirical,
+        s=12,
+        alpha=0.62,
+        color="#2563eb",
+        label="Monthly returns",
+    )
     add_reference_line(axes[1], normal_theoretical, normal_empirical)
     axes[1].set_title("Q-Q vs fitted Normal")
     axes[1].set_xlabel("Normal theoretical quantiles")
@@ -172,8 +195,24 @@ def save_industry_diagnostic_plot(industry: str, values: np.ndarray) -> Path:
     axes[1].grid(alpha=0.18)
     format_percent_axis(axes[1])
     axes[1].yaxis.set_major_formatter(lambda value, _position: f"{value * 100:.0f}%")
+    axes[1].legend(loc="upper left", fontsize=8, frameon=True)
+    axes[1].text(
+        0.04,
+        0.05,
+        "Closer to line = better fit",
+        transform=axes[1].transAxes,
+        fontsize=8,
+        bbox={"boxstyle": "round,pad=0.25", "facecolor": "white", "alpha": 0.82, "edgecolor": "#d1d5db"},
+    )
 
-    axes[2].scatter(student_theoretical, student_empirical, s=12, alpha=0.62, color="#7c3aed")
+    axes[2].scatter(
+        student_theoretical,
+        student_empirical,
+        s=12,
+        alpha=0.62,
+        color="#7c3aed",
+        label="Monthly returns",
+    )
     add_reference_line(axes[2], student_theoretical, student_empirical)
     axes[2].set_title(f"Q-Q vs fitted Student-t (df={degrees_of_freedom:.1f})")
     axes[2].set_xlabel("Student-t theoretical quantiles")
@@ -181,6 +220,15 @@ def save_industry_diagnostic_plot(industry: str, values: np.ndarray) -> Path:
     axes[2].grid(alpha=0.18)
     format_percent_axis(axes[2])
     axes[2].yaxis.set_major_formatter(lambda value, _position: f"{value * 100:.0f}%")
+    axes[2].legend(loc="upper left", fontsize=8, frameon=True)
+    axes[2].text(
+        0.04,
+        0.05,
+        "Closer to line = better fit",
+        transform=axes[2].transAxes,
+        fontsize=8,
+        bbox={"boxstyle": "round,pad=0.25", "facecolor": "white", "alpha": 0.82, "edgecolor": "#d1d5db"},
+    )
 
     figure.tight_layout(rect=(0, 0, 1, 0.92))
     figure.savefig(output_path, dpi=180)
