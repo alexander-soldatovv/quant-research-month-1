@@ -57,3 +57,14 @@ This writes:
 The statistics are calculated for `simple`, `log`, and `excess_simple` monthly decimal returns.
 Volatility is the sample standard deviation of monthly returns.
 Kurtosis is reported as excess kurtosis, so a normal distribution is approximately `0`.
+
+Plot histograms and Q-Q diagnostics for industry simple returns:
+
+```bash
+python3 scripts/plot_industry_distributions.py
+```
+
+This writes PNG files to:
+
+- `reports/figures/industry_simple_return_histograms.png`
+- `reports/figures/*_distribution_diagnostics.png`
