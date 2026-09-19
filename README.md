@@ -68,3 +68,16 @@ This writes PNG files to:
 
 - `reports/figures/industry_simple_return_histograms.png`
 - `reports/figures/*_distribution_diagnostics.png`
+
+Calculate bootstrap confidence intervals for industry means and medians:
+
+```bash
+python3 scripts/bootstrap_industry_intervals.py
+```
+
+This writes:
+
+- `data/processed/10_industry_portfolios_bootstrap_intervals.csv`
+- `reports/figures/industry_bootstrap_intervals_simple.png`
+
+The script uses a percentile bootstrap with 10,000 resamples and a fixed random seed.
